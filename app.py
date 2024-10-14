@@ -1,128 +1,116 @@
-"""
-BANCO DE DADOS
-
-    -SQL (Linguagem de consulta estruturada)
-    -EXEMPLO: 
-        - SELECT * FROM CLIENTES;
-        - Irá consultar o BD na tabela clientes.
-
-        -SGBD:
-            - Gerenciar permissões de acesso
-            - Administrador de Banco de Dados (DBA)
-            - Criar consultas personalizadas
-            - SELECT * FROM CLIENTES;
-
-    -ORM: Mapeamento Objeto Relacional
-        - Permite usar a linguagem de programação para manipular o Banco de Dados
-
-    - Instalando ORM para Python:
-        - pip install sqlalchemy
-"""
 import os
 
 from sqlalchemy import create_engine, Column, String, Integer
 from sqlalchemy.orm import sessionmaker, declarative_base
 
 #Criando banco de dados.
-MEU_BANCO = create_engine ("sqlite:///meubanco.db")
+ALUNOS_BANCO = create_engine ("sqlite:///alunosbanco.db")
 
 #CRIANDO CONEXÃO COM BANCO DE DADOS
-session = sessionmaker(bind=MEU_BANCO)
+session = sessionmaker(bind=ALUNOS_BANCO)
 session = session()
 
 #Criando tabela.
 Base = declarative_base()
 
-class Cliente(Base):
-    __tablename__ =  "clientes"
+class Aluno(Base):
+    __tablename__ =  "alunos"
 
     #Definindo campos da tabela.
     id = Column ("id", Integer, primary_key=True, autoincrement=True)
+    ra = Column("ra", String)
     nome = Column("nome", String)
+    sobrenome = Column("sobrenome", String)
     email = Column("email", String)
     senha = Column("senha", String)
 
     #Definindo atributos da classe
-    def __init__(self, nome: str, email: str, senha: str):
+    def __init__(self, ra: str, nome: str, sobrenome: str, email: str, senha: str):
+        self.ra = ra
         self.nome = nome
+        self.sobrenome = sobrenome
         self. email = email
         self.senha = senha
 
 #Criando tabela do Banco de Dados.
-Base.metadata.create_all(bind=MEU_BANCO)
+Base.metadata.create_all(bind=ALUNOS_BANCO)
 
 #CRUD
 #Creat - Insert - Salvar.
 os.system("cls||clear")
-print("= Solicitando dados para o usuário = ")
+print("= Solicitando dados para o aluno  = ")
+inserir_ra = input("Digite seu R.A: ")
 inserir_nome = input("Digite seu nome: ")
+inserir_sobrenome = input ("Digite seu sobrenome: ")
 inserir_email = input("Digite seu email: ")
 inserir_senha = input("Digite sua senha: ")
 
-cliente = Cliente(nome=inserir_nome, email=inserir_email, senha=inserir_senha)
-session.add(cliente)
+aluno = Aluno(ra=inserir_ra, nome=inserir_nome, sobrenome=inserir_sobrenome, email=inserir_email, senha=inserir_senha)
+session.add(aluno)
 session.commit()
 
 #R - Read - Select - Consulta 
-print("\n= Exibindo dados de todos os clientes =")
-lista_clientes = session.query(Cliente).all()
+print("\n= Exibindo dados de todos os alunos =")
+lista_alunos = session.query(Aluno).all()
 
-for cliente in lista_clientes:
-    print(f"{cliente.id} - {cliente.nome} - {cliente.email} - {cliente.senha}")
+for aluno in lista_alunos:
+    print(f"{aluno.id} - {aluno.ra} - {aluno.nome} - {aluno.sobrenome} - {aluno.email} - {aluno.senha}")
 
 #U - Update - UPDATE -  Atualizar
 print("\n= Atualizar dados de todos os usuários =")
-email_cliente = input("Digite o email do cliente que será corrigido: ")
+email_aluno = input("Digite o email do aluno que será corrigido: ")
 
-cliente = session.query(Cliente).filter_by(email = email_cliente).first()
+aluno = session.query(Aluno).filter_by(email = email_aluno).first()
 
-if cliente:
-    cliente.nome = input("Digite seu nome: ")
-    cliente.email = input("Digite seu email: ")
-    cliente.senha = input("Digite seua senha: ")
+if aluno:
+    aluno.ra = input ("Digite seu R.A: ")
+    aluno.nome = input("Digite seu nome: ")
+    aluno.sobrenome = input("Digite seu sobrenome: ")
+    aluno.email = input("Digite seu email: ")
+    aluno.senha = input("Digite sua senha: ")
 
     session.commit
 
 else:
-    print("Cliente não encontrado!")
+    print("Aluno não encontrado!")
 
 #R - Read - Select - Consulta 
-print("\n= Exibindo dados de todos os clientes =")
-lista_clientes = session.query(Cliente).all()
+print("\n= Exibindo dados de todos os alunos =")
+lista_alunos = session.query(Aluno).all()
 
-for cliente in lista_clientes:
-    print(f"{cliente.id} - {cliente.nome} - {cliente.email} - {cliente.senha}")
+for alunos in lista_alunos:
+    print(f"{aluno.id} - {aluno.ra} - {aluno.nome} - {aluno.sobrenome} - {aluno.email} - {aluno.senha}")
 
 #D - Delete - DELETE - Excluir
-print("\n= Excluindo os dados de um cliente =")
-email_cliente = input("Digite o email do cliente que será excluído: ")
+print("\n= Excluindo os dados de um aluno =")
+email_aluno = input("Digite o email do aluno que será excluído: ")
 
-cliente = session.query(Cliente).filter_by(email = email_cliente).first()
+aluno = session.query(Aluno).filter_by(email = email_aluno).first()
 
-if cliente:
-    session.delete(cliente)
+if aluno:
+    session.delete(aluno)
     session.commit()
-    print(f"Cliente {cliente.nome} excluido com sucesso!")
+    print(f"Aluno {aluno.nome} excluido com sucesso!")
 else:
-    print ("Cliente não encontrado")    
+    print ("Aluno não encontrado")    
 
 #R - Read - Select - Consulta 
-print("\n= Exibindo dados de todos os clientes =")
-lista_clientes = session.query(Cliente).all()
+print("\n= Exibindo dados de todos os alunos =")
+lista_alunos = session.query(Aluno).all()
 
-for cliente in lista_clientes:
-    print(f"{cliente.id} - {cliente.nome} - {cliente.email} - {cliente.senha}")
+for aluno in lista_alunos:
+    print(f"{aluno.id} - {aluno.ra} - {aluno.nome} - {aluno.sobrenome} - {aluno.email} - {aluno.senha}")
 
 #R - Read - Select - Consulta
-print("= Consultando os dados de apenas um cliente =")    
-email_cliente = input("Digite o email do cliente: ")
+print("= Consultando os dados de apenas um aluno =")    
+email_aluno = input("Digite o email do aluno: ")
 
-cliente = session.query(Cliente).filter_by(email = email_cliente).first()
+aluno = session.query(Aluno).filter_by(email = email_aluno).first()
 
-if cliente:
-   print(f"{cliente.id} - {cliente.nome} - {cliente.email} - {cliente.senha}")
+if aluno:
+   print(f"{aluno.id} - {aluno.ra} - {aluno.nome} - {aluno.sobrenome} - {aluno.email} - {aluno.senha}")
 else: 
-    print("Cliente não encontrado")
+    print("Aluno não encontrado")
 
 #FECHANDO CONEXÃO COM BANCO DE DADOS    
 session.close()
